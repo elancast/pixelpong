@@ -10,14 +10,23 @@ import ddf.minim.*;
 
 final int numInnerColumns = 111;
 final color fbBlue = #3b5998;
+final int dishNicheHeight = 5;
+final int dishNicheOffset = 17;
+final int dishNicheWidth = 18;
+
+int nodeWidth = 190;
+int nodeHeight = 24;
+int simulationScale = 6;
+int simulationGap = 40;
+
 
 HeronLX lx;
 KinetNode[] nodes;
 boolean kinetActive = false;
 
 void setup() {
-  size(193*6, 24*6);
-  lx = new HeronLX(this, 190, 24);
+  size(nodeWidth*simulationScale + simulationGap, nodeHeight*simulationScale);
+  lx = new HeronLX(this, nodeWidth, nodeHeight);
   lx.setPatterns(new LXPattern[] {
     new BaseHuePattern(lx),
   });
@@ -99,12 +108,16 @@ void setup() {
   }
   
   lx.setPatterns(new LXPattern[] {
+    new TestConnection(lx),
     new Droplets(lx),
-    new RainPattern(lx),
-    new FirePattern(lx),
-    new LifePattern(lx),
-    
   });
+  
+  background(0);
+  noStroke();
+  stroke(#202020);
+  fill(#191919);
+  rect(numInnerColumns*simulationScale, 0, simulationGap, height);
+  rect(dishNicheOffset*simulationScale, dishNicheHeight*simulationScale, dishNicheWidth*simulationScale, height);
   
   println("Caf8teen initialized, press 'k' to toggle live lighting output");
 }
