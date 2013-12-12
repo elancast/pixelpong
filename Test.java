@@ -24,7 +24,6 @@ class Test {
             e.printStackTrace();
         }
 
-
         System.out.println("test");
     }
 }
