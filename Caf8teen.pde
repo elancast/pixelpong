@@ -108,8 +108,7 @@ void setup() {
   }
   
   lx.setPatterns(new LXPattern[] {
-    new TestConnection(lx),
-    new Droplets(lx),
+    new PixelPong(lx),
   });
   
   background(0);

@@ -1,9 +1,9 @@
 import java.io.*;
 import java.net.*;
-class TestConnection extends LXPattern {
+class PixelPong extends LXPattern {
     private NetworkThread thread;
 
-    public TestConnection(HeronLX lx) {
+    public PixelPong(HeronLX lx) {
         super(lx);
         thread = new NetworkThread();
         thread.start();
@@ -43,7 +43,7 @@ class TestConnection extends LXPattern {
                 url = new URL("http://www.timeapi.org/utc/now");
                 connection = (HttpURLConnection)url.openConnection();
                 connection.setRequestMethod("GET");
-                
+
                 InputStream is = connection.getInputStream();
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
                 String line;
