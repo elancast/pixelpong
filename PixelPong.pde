@@ -10,37 +10,52 @@ class PixelPong extends LXPattern {
     }
 
     public void run(int deltaMs) {
-        String time = this.thread.getLastResponse();
-        System.out.println(deltaMs + " " + time);
-        int value = time.hashCode() % 256;
-
         clearColors();
-        color c = color(random(0, 255), random(0, 255), random(0, 255));
-        c = color(value, value, value);
+        color c = this.thread.getLastPixelPongState().getColor();
         for (int i = 0; i < lx.total; ++i) {
             addColor(i, c);
         }
     }
 
+    private class PixelPongState {
+        private int[] colors;
+        private int index;
+
+        public PixelPongState() {
+            this.colors = new int[]{0, 0, 0};
+            this.index = 0;
+        }
+
+        public void addColorPart(int colorPart) {
+            this.colors[index++] = colorPart;
+        }
+
+        public color getColor() {
+            return color(this.colors[0], this.colors[1], this.colors[2]);
+        }
+    }
+
     private class NetworkThread extends Thread {
-        private volatile String lastResponse = "";
+        private final String URL = "http://www.elancaster.sb.facebook.com/pixelpong/state?gross_response=1";
+        private volatile PixelPongState lastPixelPongState = new PixelPongState();
 
         public void run() {
             while (true) {
-                System.out.println("going!");
-                this.lastResponse = this.getFromServer();
+                this.lastPixelPongState = this.getFromServer();
             }
         }
 
-        public synchronized String getLastResponse() {
-            return lastResponse;
+        public synchronized PixelPongState getLastPixelPongState() {
+            return lastPixelPongState;
         }
 
-        private String getFromServer() {
+        private PixelPongState getFromServer() {
             URL url;
             HttpURLConnection connection = null;  
+            PixelPongState state = new PixelPongState();
             try {
-                url = new URL("http://www.timeapi.org/utc/now");
+                // TODO: Parse this!
+                url = new URL(URL);
                 connection = (HttpURLConnection)url.openConnection();
                 connection.setRequestMethod("GET");
 
@@ -49,11 +64,10 @@ class PixelPong extends LXPattern {
                 String line;
                 StringBuilder sb = new StringBuilder(); 
                 while((line = rd.readLine()) != null) {
-                    sb.append(line);
+                    int colorPart = Integer.parseInt(line);
+                    state.addColorPart(colorPart);
                 }
                 rd.close();
-                System.out.println(sb.toString());
-                return sb.toString();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -61,7 +75,7 @@ class PixelPong extends LXPattern {
                     connection.disconnect();
                 }
             }
-            return null;
+            return state;
         }
     }
 }
